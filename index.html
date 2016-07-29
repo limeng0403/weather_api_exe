@@ -1,0 +1,148 @@
+<!doctype html>
+<html class="no-js">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>天气API实例</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+  <link rel="icon" type="image/png" href="">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="天气API实例" />
+  <link rel="apple-touch-icon-precomposed" href="">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <link rel="stylesheet" href="css/amazeui.min.css">
+</head>
+
+<body>
+  <!--[if lte IE 9]>
+  <p class="browsehappy">
+    你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 
+    请<a href="http://browsehappy.com/" target="_blank">升级浏览器</a>以获得更好的体验！
+  </p>
+  <![endif]-->
+
+  <!-- 搜索栏 -->
+  <div class="am-g am-margin-top-sm">
+    <div class="am-u-sm-8">
+      <div class="am-form-group am-form-icon">
+        <i class="am-icon-search"></i>
+        <input type="text" class="am-form-field" v-model="searchKey" @keydown.enter="searchEvent()" placeholder="输入城市名称">
+      </div>
+    </div>
+    <div class="am-u-sm-4">
+      <button type="button" class="am-btn am-btn-default am-round" @click="searchEvent()">查询</button>
+    </div>
+  </div>
+
+  <!-- 状态栏 -->
+  <div class="am-g am-margin-top-sm">
+    <div class="am-u-sm-12">
+      <div class="am-alert am-alert-success" data-am-alert>
+        <span>状态：</span>
+        <span v-for="i in apiErrMsg">|--{{i}}--|</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 搜索结果 -->
+  <div class="am-g am-margin-top-sm">
+    <div class="am-u-sm-12">
+      <ul class="am-list">
+        <li v-for="i in api1Arr">
+          <a href="javascript:;" data-id="{{i.area_id}}" @click="getWeatherInfo7()">
+            <span v-text="i.province_cn"></span>-
+            <span v-text="i.district_cn"></span>-
+            <span v-text="i.name_cn"></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 当日天气 -->
+  <div v-show="weatherInfo && weatherInfo.today && weatherInfo.today.index" class="am-g am-margin-top-sm">
+    <div class="am-u-sm-12">
+      <p class="am-text-xl am-text-warning">{{weatherInfo.city}}</p>
+    </div>
+    <div class="am-u-sm-12">
+      <p>
+        今日：<span v-text="weatherInfo.today.type"></span> ，风向
+        <span v-text="weatherInfo.today.fengxiang"></span> ，风力
+        <span v-text="weatherInfo.today.fengli"></span> ，最高气温
+        <span v-text="weatherInfo.today.hightemp"></span> ，最底气温
+        <span v-text="weatherInfo.today.lowtemp"></span>
+      </p>
+      <p class="am-text-xl am-text-warning">温馨提示：</p>
+      <div class="am-tabs" data-am-tabs>
+        <ul class="am-tabs-nav am-nav am-nav-tabs">
+          <li v-for="(inx,i) in weatherInfo.today.index" class="{{inx==0?'am-active':''}}">
+            <a href="#tab{{inx}}" v-text="i.name"></a>
+          </li>
+        </ul>
+
+        <div class="am-tabs-bd">
+          <div v-for="(inx,i) in weatherInfo.today.index" class="am-tab-panel am-fade am-in {{inx==0?'am-active':''}}" id="tab{{inx}}">
+            {{i.details}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 其它四天天气栏 -->
+    <div class="am-u-sm-12 am-margin-top-sm">
+      <p class="am-text-xl am-text-warning">未来四日天气</p>
+    </div>
+    <div class="am-u-sm-12">
+      <ul class="am-list">
+        <li v-for="i in weatherInfo.forecast">
+          <p>
+            <span v-text="i.date"></span>-
+            <span v-text="i.week"></span>-
+            <span v-text="i.type"></span>
+          </p>
+          <p>
+            <span>风向：</span><span v-text="i.fengxiang"></span>
+          </p>
+          <p>
+            <span>风速：</span><span v-text="i.fengli"></span>
+          </p>
+          <p>
+            <span>温度：</span><span v-text="i.lowtemp"></span>-<span v-text="i.hightemp"></span>
+          </p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/amazeui.min.js"></script>
+  <script src="js/vue.js"></script>
+  <script src="js/app.js"></script>
+
+  <!--[if lt IE 9]>
+  <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+  <script src="js/amazeui.ie8polyfill.min.js"></script>
+  <![endif]-->
+</body>
+
+</html>
