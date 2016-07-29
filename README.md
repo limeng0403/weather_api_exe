@@ -6,7 +6,7 @@
 
 - [x] 妹子UI：[http://meizi.io](http://meizi.io)
 - [x] vuejs：[http://cn.vuejs.org](http://cn.vuejs.org)
-- [x] 百度接口集市：[http://apistore.baidu.com/apiworks/servicedetail/112.html](http://apistore.baidu.com/apiworks/servicedetail/112.html)
+- [x] 百度接口集市：[天气接口](http://apistore.baidu.com/apiworks/servicedetail/112.html)
 
 js文件：js/app.js
 
